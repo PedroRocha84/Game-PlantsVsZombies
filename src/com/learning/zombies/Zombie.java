@@ -15,6 +15,9 @@ public class Zombie {
     private int damage;
     private String picturePath;
     private Zombie zombie;
+    private int ZombiePosX;
+    private int ZombiePosY;
+    private Picture picture;
 
     public Zombie(ZombieBuilder builder) {
         this.type = builder.getType();
@@ -88,4 +91,17 @@ public class Zombie {
     }
 
 
+    /* ######## Added for Zombie placement ###### */
+    public void show(int col, int row){
+        this.ZombiePosX = col;
+        this.ZombiePosY = row;
+        picture = new Picture(col, row, this.picturePath);
+        picture.draw();
+    }
+
+    public void move(){
+        picture.translate(-2 * speed, 0);
+
+
+    }
 }

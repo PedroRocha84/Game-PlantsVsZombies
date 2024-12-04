@@ -67,8 +67,11 @@ public class Menu implements MouseHandler {
         // Get mouse coordinates
         int x = (int) mouseEvent.getX();
         int y = (int) mouseEvent.getY();
-
-        if (x >= buttonInitX && x <= buttonInitX + buttonFinalX && y >= buttonFinalY && y <= buttonInitY + buttonFinalY) {
+        System.out.println(x + " " + y);
+        if (x >= buttonInitX
+                && x <= (buttonInitX + buttonFinalX)
+                && y >= buttonInitY
+                && y <= (buttonInitY + buttonFinalY)) {
             startButtonPressed = true;
             System.out.println("Start button clicked!");
         }
