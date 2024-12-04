@@ -1,5 +1,11 @@
 package com.learning.zombies;
 
+import com.codeforall.online.simplegraphics.pictures.Picture;
+import com.learning.behaviours.GameData;
+
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Zombie {
 
     private String type;
@@ -80,4 +86,6 @@ public class Zombie {
     public void setZombie(Zombie zombie) {
         this.zombie = zombie;
     }
+
+
 }

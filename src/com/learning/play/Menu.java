@@ -8,9 +8,6 @@ import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviours.GameData;
 
-import javax.swing.*;
-import java.awt.*;
-
 
 public class Menu implements MouseHandler {
 
@@ -24,6 +21,7 @@ public class Menu implements MouseHandler {
     int buttonFinalX = GameData.get(GameData.MENU_BUTTON_WIDTH);
     int buttonFinalY = GameData.get(GameData.MENU_BUTTON_HEIGHT);
     private boolean startButtonPressed;
+    private Game game;
 
     public Menu() {
         this.startButtonPressed = false;
@@ -36,7 +34,6 @@ public class Menu implements MouseHandler {
     public void init(){
         Canvas.setMaxX(GameData.get(GameData.GRID_CANVAS_SIZE_X_MAX));
         Canvas.setMaxY(GameData.get(GameData.GRID_CANVAS_SIZE_Y_MAX));
-
 
     }
 
@@ -52,9 +49,16 @@ public class Menu implements MouseHandler {
             Thread.sleep(50);
         }
 
-        backgroundImg.load("resources/images/playground.png");
-        Picture topMenu = new Picture(GameData.get(GameData.GRID_GRIDSTART_X), 0, "resources/images/topMenu.png");
-        topMenu.draw();
+        /**
+         * Create a new instance (or object) of the Game class by calling its constructor.
+         * This invokes the Game class's constructor, which initializes the object */
+        Game game = new Game();
+
+        /**
+         * invoke the method gameMenusInit where it will display the playground and the
+         * top menu bar for game interface */
+        game.gameMenusInit(backgroundImg);
+
     }
 
     @Override
