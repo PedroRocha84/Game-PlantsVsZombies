@@ -1,7 +1,5 @@
 package com.learning.zombies;
 
-import com.codeforall.online.simplegraphics.pictures.Picture;
-
 public class Zombie {
 
     private String type;
