@@ -9,10 +9,16 @@ public enum GameData {
 
     // GAME GRID INFO
     GRID_GRIDSTART_X(180),
-    GRID_GRIDSTART_Y(73),
+    GRID_GRIDSTART_Y(79),
+    GRID_GRIDEND_X(700),
+    GRID_GRIDEND_Y(400),
 
     GRID_CANVAS_SIZE_X_MAX(810),
     GRID_CANVAS_SIZE_Y_MAX(610);
+
+    //Zombies and Plants
+
+
     private final int value;
 
     GameData(int value) {

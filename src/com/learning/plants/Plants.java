@@ -12,6 +12,8 @@ public class Plants {
     private Picture picture;
     private int pictureWidth;
     private int pictureHeight;
+    private int PlantsPosX;
+    private int PlantsPosY;
 
     public Plants(PlantsBuilder builder) {
         this.type = builder.getType();
@@ -24,4 +26,14 @@ public class Plants {
     public String getType() {
         return type;
     }
+
+    /* ######## Added for placement ###### */
+    public void show(int col, int row){
+        //System.out.println("The picture is at position " + this.PlantsPosX + ", " + this.PlantsPosY);
+        this.PlantsPosX = col;
+        this.PlantsPosY = row;
+        picture = new Picture(col, row, this.picturePath);
+        picture.draw();
+    }
+
 }

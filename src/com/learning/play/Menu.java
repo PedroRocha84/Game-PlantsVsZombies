@@ -8,6 +8,8 @@ import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviours.GameData;
 
+import java.io.IOException;
+
 
 public class Menu implements MouseHandler {
 
@@ -37,7 +39,8 @@ public class Menu implements MouseHandler {
 
     }
 
-    public void show() throws InterruptedException {
+    public void show() throws IOException, InterruptedException {
+
         Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
         backgroundImg.draw();
 
@@ -57,7 +60,7 @@ public class Menu implements MouseHandler {
         /**
          * invoke the method gameMenusInit where it will display the playground and the
          * top menu bar for game interface */
-        game.gameMenusInit(backgroundImg);
+       game.gameMenusInit(backgroundImg);
 
     }
 
