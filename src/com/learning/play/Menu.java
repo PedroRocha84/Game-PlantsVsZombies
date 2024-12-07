@@ -6,61 +6,48 @@ import com.codeforall.online.simplegraphics.mouse.MouseEvent;
 import com.codeforall.online.simplegraphics.mouse.MouseEventType;
 import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
-import com.learning.behaviours.GameData;
+import com.learning.behaviour.MenuControl;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 
 public class Menu implements MouseHandler {
 
-    /**
-     * The start button on the image, will be controlled by user Mouse Click and return the click position between
-     * coordinates
-     * */
+    int buttonInitX = MenuControl.get(MenuControl.MENU_BUTTON_X);
+    int buttonInitY = MenuControl.get(MenuControl.MENU_BUTTON_Y);
+    int buttonFinalX = MenuControl.get(MenuControl.MENU_BUTTON_WIDTH);
+    int buttonFinalY = MenuControl.get(MenuControl.MENU_BUTTON_HEIGHT);
 
-    int buttonInitX = GameData.get(GameData.MENU_BUTTON_X);
-    int buttonInitY = GameData.get(GameData.MENU_BUTTON_Y);
-    int buttonFinalX = GameData.get(GameData.MENU_BUTTON_WIDTH);
-    int buttonFinalY = GameData.get(GameData.MENU_BUTTON_HEIGHT);
     private boolean startButtonPressed;
+
     private Game game;
 
     public Menu() {
         this.startButtonPressed = false;
     }
 
-    /**
-     * This method will run one at the game start to show the menu
-     * */
-
     public void init(){
-        Canvas.setMaxX(GameData.get(GameData.GRID_CANVAS_SIZE_X_MAX));
-        Canvas.setMaxY(GameData.get(GameData.GRID_CANVAS_SIZE_Y_MAX));
-
+        Canvas.setMaxX(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX));
+        Canvas.setMaxY(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX));
     }
 
-    public void show() throws IOException, InterruptedException {
+    public void show() throws FileNotFoundException, InterruptedException {
 
-        Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
-        backgroundImg.draw();
+            Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
+            backgroundImg.draw();
 
-        // Set up mouse handling
-        Mouse mouse = new Mouse(this);
-        mouse.addEventListener(MouseEventType.MOUSE_CLICKED);
+            // Set up mouse handling
+            Mouse mouse = new Mouse(this);
+            mouse.addEventListener(MouseEventType.MOUSE_CLICKED);
 
-        while(!startButtonPressed) {
-            Thread.sleep(50);
-        }
+            while(!startButtonPressed) {
+                Thread.sleep(50);
+            }
 
-        /**
-         * Create a new instance (or object) of the Game class by calling its constructor.
-         * This invokes the Game class's constructor, which initializes the object */
-        Game game = new Game();
+            backgroundImg.delete();
 
-        /**
-         * invoke the method gameMenusInit where it will display the playground and the
-         * top menu bar for game interface */
-       game.gameMenusInit(backgroundImg);
+            Game game = new Game(1);
+
 
     }
 

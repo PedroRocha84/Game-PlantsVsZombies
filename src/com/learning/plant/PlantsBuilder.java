@@ -1,4 +1,4 @@
-package com.learning.plants;
+package com.learning.plant;
 
 public class PlantsBuilder {
     // Propriedades

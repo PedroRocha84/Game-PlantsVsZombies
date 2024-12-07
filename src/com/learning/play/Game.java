@@ -5,77 +5,153 @@ import com.codeforall.online.simplegraphics.mouse.MouseEvent;
 import com.codeforall.online.simplegraphics.mouse.MouseEventType;
 import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
-import com.learning.behaviours.GameData;
-import com.learning.plants.PlantsBuilder;
-import com.learning.plants.PlantsFactory;
-import com.learning.zombies.Zombie;
-import com.learning.zombies.ZombieBuilder;
-import com.learning.zombies.ZombieFactory;
-import com.learning.plants.Plants;
+import com.learning.behaviour.GameLevel;
+import com.learning.behaviour.MenuControl;
+import com.learning.behaviour.Zombies;
+import com.learning.pea.Pea;
+import com.learning.plant.PlantsBuilder;
+import com.learning.plant.PlantsFactory;
+import com.learning.zombie.Zombie;
+import com.learning.zombie.ZombieBuilder;
+import com.learning.zombie.ZombieFactory;
+import com.learning.plant.Plants;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.management.PlatformLoggingMXBean;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Game implements MouseHandler {
 
-    private Game game;
     private List<Zombie> allZombies;
-    private int numberOfZombies = 0;
+    private List<Pea> allPeas = new ArrayList<>();
+
+    private static int IMAGE_WIDTH = 60;
+    private static int IMAGE_HEIGTH = 65;
+
     private int posX;
     private int posY;
+    private int level;
+    private int numberOfZombies;
+    private int lanesToPlaceZombies;
+
     private Mouse mouse;
+    private Picture playground;
     private Plants createdPlants;
 
-    public Game (){
+    public Game(int level) throws FileNotFoundException, InterruptedException {
+        this.level = level;
+        startGame(this.level);
 
     }
 
-    public void gameMenusInit(Picture picture) throws IOException {
-        picture.load("resources/images/playground.png");
-        Picture topMenu = new Picture(GameData.get(GameData.GRID_GRIDSTART_X), 0, "resources/images/topMenu.png");
-        topMenu.draw();
-        addZombies(2);
+    public void startGame(int level) throws FileNotFoundException, InterruptedException {
+
+        String backgroundPath = GameLevel.getGameBackground(level);
+        activateBackground(backgroundPath);
+
+        addZombies(level);
+
         showPlants();
 
-//        while (true){
-//            moveAllZombies(allZombies);
-//            Thread.sleep(100);
-//        }
+        startGameLoop();
 
     }
 
-    public void addZombies(int numberOfZombies){
+    public void startGameLoop() throws InterruptedException {
+
+        while(true){
+           moveAllPeas(allPeas);
+           Thread.sleep(100);
+//            moveAllZombies();
+            checkColisions();
+        }
+    }
+
+    public void createPeas(int centerX, int centerY) throws FileNotFoundException, InterruptedException {
+        Pea pea = new Pea();
+        pea.addNewPea(centerX,centerY);
+        allPeas.add(pea);
+        System.out.println(allPeas.size());
+    }
+
+    public void checkColisions(){
+        int distancetoZombie = 30;
+        for (int i = 0; i < allZombies.size(); i++) {
+            Zombie zombie = allZombies.get(i);
+            for (int j = 0; j < allPeas.size(); j++) {
+            Pea pea = allPeas.get(j);
+
+                if (Math.abs(pea.getPositionX() - zombie.getZombiePosX()) <= distancetoZombie) {
+                    // Make the pea's image disappear
+                    pea.getPicture().delete(); // Ensure you have a getter for the Picture field
+
+                    // Remove the pea from the list
+                    allPeas.remove(j);
+                    j--; // Adjust the index since the list size has decreased
+
+                    System.out.println("Collision detected! Pea removed.");
+                    break; // Exit the loop to avoid further checks for this pea
+                }
+            }
+        }
+
+    }
+
+    public void activateBackground(String imagePath) throws FileNotFoundException {
+
+            playground = new Picture(0, 0, imagePath);
+            playground.draw();
+
+            Picture topMenu = new Picture(MenuControl.get(MenuControl.GRID_GRIDSTART_X), 0, "resources/images/topMenu.png");
+            topMenu.draw();
+
+    }
+
+    public void addZombies(int level){
         allZombies = new ArrayList<>();
-        /**
-         * Step 3: Random object for random number generation
-         */
-        Random random = new Random();
 
-        // Step 4: Loop to create zombies
+        // Create number of zombies comparing with the level
+        if(level == 1) {
+            System.out.println("level is : " + level);
+            numberOfZombies = 4;
+            lanesToPlaceZombies = 2;
+        }else if (level == 2) {
+            numberOfZombies = 6;
+            lanesToPlaceZombies = 3;
+        } else if(level == 3) {
+            numberOfZombies = 8;
+            lanesToPlaceZombies = 5;
+        }
+
         for (int i = 0; i < numberOfZombies; i++) {
-            // Randomly decide the zombie type
             String zombieType;
-
             double numRandom = Math.random();
-            if (numRandom <= 0.5) {
-                zombieType = "Civil";
+            if (numRandom <= 0.8) {
+                zombieType = Zombies.ZOMBIES_TYPE_1.getType();
             } else {
-                zombieType = "Militar";
+                zombieType = Zombies.ZOMBIES_TYPE_2.getType();
             }
 
-            // Use the factory to create a fully configured zombie
             Zombie initialZombie = new ZombieBuilder().setType(zombieType).build();
-            System.out.println(zombieType);
             Zombie createdZombie = ZombieFactory.createZombie(initialZombie);
-            posX = GameData.get(GameData.GRID_GRIDSTART_X) + 600;
-            posY = GameData.get(GameData.GRID_GRIDSTART_Y) + (60 * (i));
+
+            posX = MenuControl.get(MenuControl.GRID_GRIDSTART_X)
+                    + MenuControl.ZOMBIES_POSITION_X.getValue();
+            posY = MenuControl.get(MenuControl.GRID_GRIDSTART_Y)
+                    + (MenuControl.ZOMBIES_POSITION_Y.getValue() * i);
+
+            System.out.println(posX + " " + posY);
             createdZombie.show(posX, posY);
 
-            // Add to the list
             allZombies.add(createdZombie);
+        }
+    }
+
+    public void moveAllPeas(List<Pea> allPeas) {
+        for (int i = 0; i < allPeas.size(); i++) {
+            Pea pea = this.allPeas.get(i);
+            pea.movePea();
         }
     }
 
@@ -83,9 +159,6 @@ public class Game implements MouseHandler {
         for (int i = 0; i < allZombies.size(); i++) {
             Zombie zombie = this.allZombies.get(i);
             zombie.move();
-//            int xPos = zombie.getX();  // Obtém a posição X
-//            int yPos = zombie.getY();  // Obtém a posição Y
-            //System.out.println("Zombie " + i + " position: (" + xPos + ", " + yPos + ")");
         }
     }
 
@@ -94,6 +167,7 @@ public class Game implements MouseHandler {
 
         Plants plant = new PlantsBuilder().setType(plantType).build();
         createdPlants = PlantsFactory.createPlants(plant);
+
         mouse = new Mouse(this);
         mouse.addEventListener(MouseEventType.MOUSE_CLICKED);
 
@@ -101,45 +175,35 @@ public class Game implements MouseHandler {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+
         int mouseX = (int) mouseEvent.getX();
         int mouseY = (int) mouseEvent.getY() - 39;
 
         // Retrieve grid boundaries from enum
-        int gridStartX = GameData.GRID_GRIDSTART_X.getValue();
-        int gridStartY = GameData.GRID_GRIDSTART_Y.getValue();
-        int gridEndX = GameData.GRID_GRIDEND_X.getValue();
-        int gridEndY = GameData.GRID_GRIDEND_Y.getValue();
+        int gridStartX = MenuControl.GRID_GRIDSTART_X.getValue();
+        int gridStartY = MenuControl.GRID_GRIDSTART_Y.getValue();
+        int gridEndX = MenuControl.GRID_GRIDEND_X.getValue();
+        int gridEndY = MenuControl.GRID_GRIDEND_Y.getValue();
 
         // Cell dimensions
-        int cellWidth = 60;
-        int cellHeight = 65;
+        int cellWidth = IMAGE_WIDTH;
+        int cellHeight = IMAGE_HEIGTH;
 
-        System.out.println("Mouse Click Position: (" + mouseX + ", " + mouseY + ")");
-//        System.out.println("Grid Start: (" + gridStartX + ", " + gridStartY + ")");
-//        System.out.println("Grid End: (" + gridEndX + ", " + gridEndY + ")");
-//        System.out.println("Cell Size: " + cellWidth + " x " + cellHeight);
+        //System.out.println("Mouse Click Position: (" + mouseX + ", " + mouseY + ")");
 
-        // Check if the click is within grid boundaries
         if (mouseX >= gridStartX && mouseX <= gridEndX && mouseY >= gridStartY && mouseY <= gridEndY) {
-            // Calculate relative position within the grid
+
             int relativeX = mouseX - gridStartX;
             int relativeY = mouseY - gridStartY;
 
-//            System.out.println("Relative Click Position: (" + relativeX + ", " + relativeY + ")");
+            int column = relativeX / cellWidth;
+            int row = relativeY / cellHeight;
 
-            // Calculate the column and row the click is in
-            int column = relativeX / cellWidth;  // integer division
-            int row = relativeY / cellHeight;    // integer division
-
-//            System.out.println("Calculated Cell: Column " + column + ", Row " + row);
-
-            // Calculate the top-left corner of the cell
             int cellX = gridStartX + (column * cellWidth);
             int cellY = gridStartY + (row * cellHeight);
 
-            System.out.println("Cell Top-Left Corner: (" + cellX + ", " + cellY + ")");
+            //System.out.println("Cell Top-Left Corner: (" + cellX + ", " + cellY + ")");
 
-            // Calculate the center of the cell
             int centerX = cellX + cellWidth / 2  ;
             int centerY = cellY + cellHeight / 2 - 18 ;
             System.out.println("center x : " + centerX);
@@ -149,11 +213,15 @@ public class Game implements MouseHandler {
                 centerX -= 12;
             } else if(mouseX > 400) {
                 centerX -= 20;
-            } else if(mouseX > 400 && mouseX < 600) {
-                centerX -= 30;
             }
-            System.out.println("center x : " + centerX);
-            createdPlants.show(centerX,centerY);
+
+            try {
+                createdPlants.show(centerX,centerY);
+                createPeas(centerX, centerY);
+
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -162,3 +230,5 @@ public class Game implements MouseHandler {
 
     }
 }
+
+

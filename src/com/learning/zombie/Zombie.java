@@ -1,10 +1,6 @@
-package com.learning.zombies;
+package com.learning.zombie;
 
 import com.codeforall.online.simplegraphics.pictures.Picture;
-import com.learning.behaviours.GameData;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Zombie {
 
@@ -101,7 +97,9 @@ public class Zombie {
 
     public void move(){
         picture.translate(-2 * speed, 0);
+    }
 
-
+    public int getZombiePosX() {
+        return ZombiePosX;
     }
 }

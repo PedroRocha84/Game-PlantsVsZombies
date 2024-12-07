@@ -1,12 +1,18 @@
-package com.learning.zombies;
+package com.learning.zombie;
+
+import com.learning.behaviour.Zombies;
+
+import java.util.Objects;
 
 public class ZombieFactory {
 
     public static Zombie createZombie(Zombie zombie) {
-        if ("Civil".equals(zombie.getType())) {
+        if(Objects.equals(zombie.getType(), Zombies.ZOMBIES_TYPE_1.getType())) {
             return createCivilZombie();
+        }else {
+            return createMilitarZombie();
         }
-        return createMilitarZombie();
+
     }
 
     private static Zombie createCivilZombie() {

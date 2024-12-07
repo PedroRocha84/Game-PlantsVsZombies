@@ -1,6 +1,6 @@
-package com.learning.behaviours;
+package com.learning.behaviour;
 
-public enum GameData {
+public enum MenuControl {
     // START MENU INFO
     MENU_BUTTON_X(155),
     MENU_BUTTON_Y(577),
@@ -8,20 +8,23 @@ public enum GameData {
     MENU_BUTTON_HEIGHT(51),
 
     // GAME GRID INFO
-    GRID_GRIDSTART_X(180),
+    GRID_GRIDSTART_X(170),
     GRID_GRIDSTART_Y(79),
     GRID_GRIDEND_X(700),
     GRID_GRIDEND_Y(400),
 
     GRID_CANVAS_SIZE_X_MAX(810),
-    GRID_CANVAS_SIZE_Y_MAX(610);
+    GRID_CANVAS_SIZE_Y_MAX(610),
 
-    //Zombies and Plants
+    ZOMBIES_POSITION_X(600),
+    ZOMBIES_POSITION_Y(60),
 
+    PEAS_POSITION_ADJUSTMENT_X(30),
+    PEAS_POSITION_ADJUSTMENT_Y(3);
 
     private final int value;
 
-    GameData(int value) {
+    MenuControl(int value) {
         this.value = value;
     }
 
@@ -29,7 +32,7 @@ public enum GameData {
         return value;
     }
 
-    public static int get(GameData data) {
+    public static int get(MenuControl data) {
         return data.getValue();
     }
 }

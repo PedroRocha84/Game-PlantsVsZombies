@@ -1,4 +1,4 @@
-package com.learning.zombies;
+package com.learning.zombie;
 
 public class ZombieBuilder {
 
