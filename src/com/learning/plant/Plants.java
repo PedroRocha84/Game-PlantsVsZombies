@@ -1,8 +1,6 @@
 package com.learning.plant;
 
 import com.codeforall.online.simplegraphics.pictures.Picture;
-import com.learning.play.Game;
-
 import java.io.IOException;
 
 public class Plants {
@@ -27,6 +25,19 @@ public class Plants {
         this.picturePath = builder.getPicturePath();
     }
 
+    // Getters
+    public int getHealth() {
+        return health;
+    }
+
+    public int getDamage(){
+        return this.damage;
+    }
+    // Setters
+    public int setDamage(int damage) {
+        return this.damage = damage;
+    }
+
     public String getType() {
         return type;
     }
@@ -39,6 +50,17 @@ public class Plants {
         picture = new Picture(col, row, this.picturePath);
         picture.draw();
 
+    }
+
+    @Override
+    public String toString() {
+        return "Plants{" +
+                "type='" + type + '\'' +
+                ", health=" + health +
+                ", maxHealth=" + maxHealth +
+                ", damage=" + damage +
+                ", picturePath='" + picturePath + '\'' +
+                '}';
     }
 
 }

@@ -20,6 +20,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Game implements MouseHandler {
 
@@ -38,6 +41,7 @@ public class Game implements MouseHandler {
     private Mouse mouse;
     private Picture playground;
     private Plants createdPlants;
+    private Plants plant;
 
     public Game(int level) throws FileNotFoundException, InterruptedException {
         this.level = level;
@@ -62,34 +66,52 @@ public class Game implements MouseHandler {
 
         while(true){
            moveAllPeas(allPeas);
-           Thread.sleep(100);
-//            moveAllZombies();
+           Thread.sleep(50);
+            moveAllZombies(allZombies);
             checkColisions();
         }
     }
 
-    public void createPeas(int centerX, int centerY) throws FileNotFoundException, InterruptedException {
-        Pea pea = new Pea();
-        pea.addNewPea(centerX,centerY);
-        allPeas.add(pea);
-        System.out.println(allPeas.size());
+    public void createAndShootPeas(int centerX, int centerY) throws FileNotFoundException, InterruptedException {
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        scheduler.scheduleAtFixedRate(() -> {
+            Pea pea = new Pea();
+            try {
+                pea.addNewPea(centerX,centerY);
+                allPeas.add(pea);
+                System.out.println(allPeas.size());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }, 0, 2, TimeUnit.SECONDS); // Initial delay 0s, repeat every 2s
+
+
+
     }
 
     public void checkColisions(){
-        int distancetoZombie = 30;
+        int distanceToZombie = 30;
         for (int i = 0; i < allZombies.size(); i++) {
             Zombie zombie = allZombies.get(i);
             for (int j = 0; j < allPeas.size(); j++) {
             Pea pea = allPeas.get(j);
 
-                if (Math.abs(pea.getPositionX() - zombie.getZombiePosX()) <= distancetoZombie) {
+                if (Math.abs(pea.getPositionX() - zombie.getZombiePosX()) <= distanceToZombie) {
                     // Make the pea's image disappear
                     pea.getPicture().delete(); // Ensure you have a getter for the Picture field
 
                     // Remove the pea from the list
                     allPeas.remove(j);
                     j--; // Adjust the index since the list size has decreased
-
+                    System.out.println("Zombie health:" + zombie.getHealth());
+                    System.out.println(createdPlants.getDamage());
+                    zombie.setDamage(createdPlants.getDamage());
+                    System.out.println("Zombie health:" + zombie.getHealth());
                     System.out.println("Collision detected! Pea removed.");
                     break; // Exit the loop to avoid further checks for this pea
                 }
@@ -165,7 +187,7 @@ public class Game implements MouseHandler {
     public void showPlants() {
         String plantType = "peaCannon";
 
-        Plants plant = new PlantsBuilder().setType(plantType).build();
+        plant = new PlantsBuilder().setType(plantType).build();
         createdPlants = PlantsFactory.createPlants(plant);
 
         mouse = new Mouse(this);
@@ -217,7 +239,7 @@ public class Game implements MouseHandler {
 
             try {
                 createdPlants.show(centerX,centerY);
-                createPeas(centerX, centerY);
+                createAndShootPeas(centerX, centerY);
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);

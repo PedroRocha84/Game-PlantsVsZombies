@@ -44,6 +44,4 @@ public class Pea {
     public Picture getPicture() {
         return newPeaPicture;
     }
-
-
 }

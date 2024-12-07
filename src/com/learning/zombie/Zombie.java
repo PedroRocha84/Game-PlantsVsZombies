@@ -75,7 +75,7 @@ public class Zombie {
     }
 
     public void setDamage(int damage) {
-        this.damage = damage;
+        this.health -= damage;
     }
 
     public void setPicturePath(String picturePath) {
@@ -97,6 +97,7 @@ public class Zombie {
 
     public void move(){
         picture.translate(-2 * speed, 0);
+        ZombiePosX = picture.getX();
     }
 
     public int getZombiePosX() {

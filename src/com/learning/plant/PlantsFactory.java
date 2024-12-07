@@ -5,11 +5,16 @@ public class PlantsFactory {
 
 
     public static Plants createPlants(Plants planta) {
+        if (planta == null || planta.getType() == null) {
+            throw new IllegalArgumentException("Planta or its type cannot be null");
+        }
+
         if ("peaCannon".equalsIgnoreCase(planta.getType())) {
             return createPeaCannon();
         }
         throw new IllegalArgumentException("Tipo de planta não suportado: " + planta.getType());
     }
+
 
 
     private static Plants createPeaCannon() {
