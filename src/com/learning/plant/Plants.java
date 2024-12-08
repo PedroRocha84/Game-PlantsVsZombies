@@ -43,7 +43,7 @@ public class Plants {
     }
 
     /* ######## Added for placement ###### */
-    public void show(int col, int row) throws IOException {
+    public void addNewPlant(int col, int row) throws IOException {
         //System.out.println("The picture is at position " + this.PlantsPosX + ", " + this.PlantsPosY);
         this.PlantsPosX = col;
         this.PlantsPosY = row;

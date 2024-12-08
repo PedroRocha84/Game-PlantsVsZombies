@@ -7,11 +7,13 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class Pea {
-    private List<Pea> allPeas;
-    private Picture newPeaPicture;
+
     private int xPos;
     private int yPos;
     private int speed = 10;
+
+    private Picture newPeaPicture;
+
     public Pea() {
 
     }
@@ -19,7 +21,6 @@ public class Pea {
     public void showPea(int xPos, int yPos) throws FileNotFoundException {
        this.xPos = xPos;
        this.yPos = yPos;
-
     }
 
     public void addNewPea(int centerX, int centerY) throws FileNotFoundException,

@@ -5,15 +5,17 @@ import com.codeforall.online.simplegraphics.pictures.Picture;
 public class Zombie {
 
     private String type;
+    private String picturePath;
+
+    private double speed;
+
     private int health;
     private int maxHealth;
-    private double speed;
     private int damage;
-    private String picturePath;
-    private Zombie zombie;
-    private int ZombiePosX;
-    private int ZombiePosY;
-    private Picture picture;
+    private int zombiePositionX;
+    private int zombiePositionY;
+
+    private Picture newZombiePicture;
 
     public Zombie(ZombieBuilder builder) {
         this.type = builder.getType();
@@ -50,13 +52,11 @@ public class Zombie {
         return picturePath;
     }
 
-    public Zombie getZombie() {
-        return zombie;
+    public int getZombiePositionX() {
+        return zombiePositionX;
     }
 
-
     // Setters
-
 
     public void setType(String type) {
         this.type = type;
@@ -82,25 +82,32 @@ public class Zombie {
         this.picturePath = picturePath;
     }
 
-    public void setZombie(Zombie zombie) {
-        this.zombie = zombie;
-    }
+    public void addNewZombie(int xPosition, int yPosition){
+        this.zombiePositionX = xPosition;
+        this.zombiePositionY = yPosition;
+        System.out.println("Zombie placed at : " + xPosition + ", " + yPosition);
+        newZombiePicture = new Picture(xPosition, yPosition, this.picturePath);
+        newZombiePicture.draw();
 
-
-    /* ######## Added for Zombie placement ###### */
-    public void show(int col, int row){
-        this.ZombiePosX = col;
-        this.ZombiePosY = row;
-        picture = new Picture(col, row, this.picturePath);
-        picture.draw();
     }
 
     public void move(){
-        picture.translate(-2 * speed, 0);
-        ZombiePosX = picture.getX();
+        newZombiePicture.translate(-2 * speed, 0);
+        zombiePositionX = newZombiePicture.getX();
     }
 
-    public int getZombiePosX() {
-        return ZombiePosX;
+    @Override
+    public String toString() {
+        return "Zombie{" +
+                "type='" + type + '\'' +
+                ", picturePath='" + picturePath + '\'' +
+                ", speed=" + speed +
+                ", health=" + health +
+                ", maxHealth=" + maxHealth +
+                ", damage=" + damage +
+                ", zombieXposition=" + zombiePositionX +
+                ", ZombieRow=" + zombiePositionY +
+                ", newZombiePicture=" + newZombiePicture +
+                '}';
     }
 }
