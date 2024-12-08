@@ -1,11 +1,14 @@
 package com.learning.zombie;
 
 import com.codeforall.online.simplegraphics.pictures.Picture;
+import com.learning.behaviour.MenuControl;
+import com.learning.behaviour.Zombies;
 
 public class Zombie {
 
     private String type;
     private String picturePath;
+    private String zombieType;
 
     private double speed;
 
@@ -56,6 +59,9 @@ public class Zombie {
         return zombiePositionX;
     }
 
+    public int getZombiePositionY() {return zombiePositionY;}
+
+
     // Setters
 
     public void setType(String type) {
@@ -64,7 +70,7 @@ public class Zombie {
 
     public void setHealth(int health) {
         this.health = health;
-    }
+        }
 
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
@@ -82,13 +88,29 @@ public class Zombie {
         this.picturePath = picturePath;
     }
 
-    public void addNewZombie(int xPosition, int yPosition){
-        this.zombiePositionX = xPosition;
-        this.zombiePositionY = yPosition;
-        System.out.println("Zombie placed at : " + xPosition + ", " + yPosition);
-        newZombiePicture = new Picture(xPosition, yPosition, this.picturePath);
-        newZombiePicture.draw();
+    public void setInjury(int damage) {
+        this.health -= damage;
+    }
 
+    public void addNewZombie(int rowNumber){
+        double numRandom = Math.random();
+        if (numRandom <= 0.8) {
+            zombieType = Zombies.ZOMBIES_TYPE_1.getType();
+        } else {
+            zombieType = Zombies.ZOMBIES_TYPE_2.getType();
+        }
+
+        this.zombiePositionX = MenuControl.get(MenuControl.GRID_GRIDSTART_X)
+                + MenuControl.ZOMBIES_POSITION_X.getValue();
+        this.zombiePositionY = MenuControl.get(MenuControl.GRID_GRIDSTART_Y)
+                + (MenuControl.ZOMBIES_POSITION_Y.getValue() * rowNumber);
+        System.out.println("Zombie placed at : " + zombiePositionX + ", " + zombiePositionY);
+        newZombiePicture = new Picture(zombiePositionX, zombiePositionY, this.picturePath);
+        newZombiePicture.draw();
+    }
+
+    public void delete(){
+        this.newZombiePicture.delete();
     }
 
     public void move(){

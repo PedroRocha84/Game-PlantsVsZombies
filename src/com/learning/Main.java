@@ -1,8 +1,5 @@
 package com.learning;
 
-import com.codeforall.online.simplegraphics.pictures.Picture;
-import com.learning.plant.Plants;
-import com.learning.plant.PlantsBuilder;
 import com.learning.play.Menu;
 
 import java.io.FileNotFoundException;

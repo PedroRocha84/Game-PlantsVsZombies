@@ -26,9 +26,12 @@ public class Menu implements MouseHandler {
         this.startButtonPressed = false;
     }
 
-    public void init(){
+    public void init() throws FileNotFoundException {
         Canvas.setMaxX(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX));
         Canvas.setMaxY(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX));
+
+        Sound sound = new Sound();
+        sound.playSound("resources/sounds/soundtrack.mp3");
     }
 
     public void show() throws FileNotFoundException, InterruptedException {
@@ -36,7 +39,6 @@ public class Menu implements MouseHandler {
             Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
             backgroundImg.draw();
 
-            // Set up mouse handling
             Mouse mouse = new Mouse(this);
             mouse.addEventListener(MouseEventType.MOUSE_CLICKED);
 
@@ -47,23 +49,19 @@ public class Menu implements MouseHandler {
             backgroundImg.delete();
 
             Game game = new Game(1);
-
-
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
 
-        // Get mouse coordinates
         int x = (int) mouseEvent.getX();
         int y = (int) mouseEvent.getY();
-        System.out.println(x + " " + y);
+
         if (x >= buttonInitX
                 && x <= (buttonInitX + buttonFinalX)
                 && y >= buttonInitY
                 && y <= (buttonInitY + buttonFinalY)) {
             startButtonPressed = true;
-            System.out.println("Start button clicked!");
         }
     }
 

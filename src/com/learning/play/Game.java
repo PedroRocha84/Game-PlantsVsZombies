@@ -7,7 +7,6 @@ import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviour.GameLevel;
 import com.learning.behaviour.MenuControl;
-import com.learning.behaviour.Zombies;
 import com.learning.pea.Pea;
 import com.learning.plant.PlantsBuilder;
 import com.learning.plant.PlantsFactory;
@@ -26,11 +25,12 @@ import java.util.concurrent.TimeUnit;
 
 public class Game implements MouseHandler {
 
-    private List<Zombie> allZombies;
+    private List<Zombie> allZombies = new ArrayList<>();
     private List<Pea> allPeas = new ArrayList<>();
 
     private static int IMAGE_WIDTH = 60;
     private static int IMAGE_HEIGTH = 65;
+    private static int tollerance = 30;
 
     // Retrieve grid boundaries from enum
     private int gridStartX = MenuControl.GRID_GRIDSTART_X.getValue();
@@ -48,6 +48,7 @@ public class Game implements MouseHandler {
     private int distanceToZombie = 30;
     private int numberOfZombies;
     private int lanesToPlaceZombies;
+    private int rowNumber;
 
     private String zombieType;
 
@@ -58,7 +59,6 @@ public class Game implements MouseHandler {
 
     public Game(int level) throws FileNotFoundException, InterruptedException {
         this.level = level;
-        allZombies = new ArrayList<>();
         startGame(this.level);
     }
 
@@ -93,14 +93,35 @@ public class Game implements MouseHandler {
     }
 
     public void checkCollisions() {
+
         for (int i = 0; i < allPeas.size(); i++) {
                 Pea pea = allPeas.get(i);
             for (int j = 0; j < allZombies.size(); j++) {
                 Zombie zombie = allZombies.get(j);
-                System.out.println("Pea position: " + pea.getPositionX());
-                System.out.println("Zombie position " + zombie.getZombiePositionX());
 
+                if (zombie.getHealth() == 0) {
+                    allZombies.remove(j);
+                    zombie.delete();
+                    int randomRowNumber = (int) (Math.random() * lanesToPlaceZombies) + 1;
+                    System.out.println(randomRowNumber);
+                    createZombies(randomRowNumber);
+                }
 
+                int peaX = pea.getPositionX();
+                int peaY = pea.getPositionY();
+                int zombieX = zombie.getZombiePositionX();
+                int zombieY = zombie.getZombiePositionY();
+
+                if (Math.abs(peaY - zombieY) <= tollerance) {
+                    if ((peaX < zombieX + distanceToZombie)
+                            && (peaX + distanceToZombie > zombieX)) {
+                        System.out.println("Collision detected!");
+                        allPeas.remove(i);
+                        pea.delete();
+                        zombie.setInjury(pea.getDamage());
+                    }
+
+                }
             }
         }
     }
@@ -140,7 +161,7 @@ public class Game implements MouseHandler {
         while(true){
             moveAllPeas(allPeas);
             Thread.sleep(50);
-            moveAllZombies(allZombies);
+            moveAllZombies();
             checkCollisions();
         }
     }
@@ -149,7 +170,7 @@ public class Game implements MouseHandler {
         // Create number of zombies comparing with the level
         if(level == 1) {
             System.out.println("level is : " + level);
-            numberOfZombies = 1;
+            numberOfZombies = 2;
             lanesToPlaceZombies = 2;
         }else if (level == 2) {
             numberOfZombies = 6;
@@ -160,27 +181,14 @@ public class Game implements MouseHandler {
         }
     }
 
-    public void createZombies(int numberOfColumn){
-        double numRandom = Math.random();
-        if (numRandom <= 0.8) {
-            zombieType = Zombies.ZOMBIES_TYPE_1.getType();
-        } else {
-            zombieType = Zombies.ZOMBIES_TYPE_2.getType();
-        }
-
-        posX = MenuControl.get(MenuControl.GRID_GRIDSTART_X)
-                + MenuControl.ZOMBIES_POSITION_X.getValue();
-        posY = MenuControl.get(MenuControl.GRID_GRIDSTART_Y)
-                + (MenuControl.ZOMBIES_POSITION_Y.getValue() * numberOfColumn);
+    public void createZombies(int rowNumber){
 
         Zombie initialZombie = new ZombieBuilder().setType(zombieType).build();
         Zombie createdZombie = ZombieFactory.createZombie(initialZombie);
 
-        System.out.println(numberOfColumn);
-//        System.out.println("New Zombie created at X " + posX + " and Y " + posY);
-
-        createdZombie.addNewZombie(posX, posY);
+        createdZombie.addNewZombie(rowNumber);
         allZombies.add(createdZombie);
+
     }
 
     public void setPlantPosition(int mouseX, int mouseY) {
@@ -207,6 +215,7 @@ public class Game implements MouseHandler {
             }
 
             try {
+
                 createdPlants.addNewPlant(centerX,centerY);
                 createAndShootPeas(centerX, centerY);
 
@@ -223,9 +232,9 @@ public class Game implements MouseHandler {
         }
     }
 
-    public void moveAllZombies(List<Zombie> allZombies) {
+    public void moveAllZombies() {
         for (int i = 0; i < allZombies.size(); i++) {
-            Zombie zombie = this.allZombies.get(i);
+            Zombie zombie = allZombies.get(i);
             zombie.move();
         }
     }
@@ -235,7 +244,7 @@ public class Game implements MouseHandler {
 
         int mouseX = (int) mouseEvent.getX();
         int mouseY = (int) mouseEvent.getY() - 39;
-
+        System.out.println(mouseX + " " + mouseY);
             setPlantPosition(mouseX,mouseY);
 
         }

@@ -4,13 +4,13 @@ import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviour.MenuControl;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 public class Pea {
 
     private int xPos;
     private int yPos;
     private int speed = 10;
+    private int damage = 20;
 
     private Picture newPeaPicture;
 
@@ -40,6 +40,14 @@ public class Pea {
 
     public int getPositionX() {
         return newPeaPicture.getX();
+    }
+
+    public int getPositionY() {return newPeaPicture.getY();}
+
+    public int getDamage() {return damage;}
+
+    public void delete(){
+        newPeaPicture.delete();
     }
 
     public Picture getPicture() {
