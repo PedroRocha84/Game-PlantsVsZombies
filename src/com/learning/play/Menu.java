@@ -11,6 +11,7 @@ import com.learning.behaviour.MenuControl;
 import java.io.FileNotFoundException;
 
 
+
 public class Menu implements MouseHandler {
 
     int buttonInitX = MenuControl.get(MenuControl.MENU_BUTTON_X);
@@ -21,17 +22,15 @@ public class Menu implements MouseHandler {
     private boolean startButtonPressed;
 
     private Game game;
+    private Thread musicThread;
 
-    public Menu() {
+    public Menu() throws Exception {
         this.startButtonPressed = false;
     }
 
-    public void init() throws FileNotFoundException {
+    public void init() {
         Canvas.setMaxX(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX));
         Canvas.setMaxY(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX));
-
-        Sound sound = new Sound();
-        sound.playSound("resources/sounds/soundtrack.mp3");
     }
 
     public void show() throws FileNotFoundException, InterruptedException {

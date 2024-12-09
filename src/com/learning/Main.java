@@ -8,11 +8,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
 
-        Menu menu = new Menu();
-        menu.init();
+
         try {
+            Menu menu = new Menu();
+            menu.init();
             menu.show();
-        }catch (IOException e){
+        }catch (Exception e){
             System.err.println(e);
         }finally {
 
