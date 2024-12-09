@@ -113,6 +113,10 @@ public class Zombie {
         this.newZombiePicture.delete();
     }
 
+    public void stopMove(){
+        this.speed = 0;;
+    }
+
     public void move(){
         newZombiePicture.translate(-2 * speed, 0);
         zombiePositionX = newZombiePicture.getX();

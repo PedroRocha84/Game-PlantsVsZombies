@@ -7,6 +7,8 @@ public class PlantsBuilder {
     private int maxHealth;
     private int damage;
     private String picturePath;
+    private int positionX;
+    private int positionY;
 
     public Plants build() {
         return new Plants(this);
@@ -32,6 +34,10 @@ public class PlantsBuilder {
         return picturePath;
     }
 
+    public int getPositionX() {return positionX;}
+
+    public int getPositionY() {return positionY;}
+
     // Setters
 
     public PlantsBuilder setType(String type) {
@@ -56,6 +62,16 @@ public class PlantsBuilder {
 
     public PlantsBuilder setPicturePath(String picturePath) {
         this.picturePath = picturePath;
+        return this;
+    }
+
+    public PlantsBuilder setPositionX(int positionX) {
+        this.positionX = positionX;
+        return this;
+    }
+
+    public PlantsBuilder setPositionY(int positionY) {
+        this.positionY = positionY;
         return this;
     }
 }

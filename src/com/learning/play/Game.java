@@ -15,6 +15,8 @@ import com.learning.zombie.ZombieBuilder;
 import com.learning.zombie.ZombieFactory;
 import com.learning.plant.Plants;
 
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ public class Game implements MouseHandler {
 
     private List<Zombie> allZombies = new ArrayList<>();
     private List<Pea> allPeas = new ArrayList<>();
+    private List<Plants> allPlants = new ArrayList<>();
 
     private static int IMAGE_WIDTH = 60;
     private static int IMAGE_HEIGTH = 65;
@@ -51,31 +54,44 @@ public class Game implements MouseHandler {
     private int rowNumber;
 
     private String zombieType;
+    private String backgroundPath;
 
     private Mouse mouse;
     private Picture playground;
     private Plants createdPlants;
     private Plants plant;
+    private SoundPlayer soundPlayer;
 
-    public Game(int level) throws FileNotFoundException, InterruptedException {
+    public Game(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
         this.level = level;
         startGame(this.level);
-
     }
 
-    public void startGame(int level) throws FileNotFoundException, InterruptedException {
+    public void startGame(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
 
-        String backgroundPath = GameLevel.getGameBackground(level);
+        backgroundPath= GameLevel.getGameBackground(level);
         activateBackground(backgroundPath);
 
         GameStats gameStats = new GameStats();
         gameStats.showMainText(level);
+
+        String filePath = "resources/sounds/soundtrack.wav";
+       // soundPlayer  = new SoundPlayer(filePath);
+       // soundPlayer.play();
+
         addZombies(level);
 
         showPlants();
 
         startGameLoop();
 
+    }
+
+    public void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        soundPlayer.stop();
+
+        GameStats gameStats = new GameStats();
+        gameStats.gameOver();
     }
 
     public void createAndShootPeas(int centerX, int centerY) throws FileNotFoundException, InterruptedException {
@@ -91,24 +107,24 @@ public class Game implements MouseHandler {
                 throw new RuntimeException(e);
             }
 
-        }, 0, 3, TimeUnit.SECONDS); // Initial delay 0s, repeat every 2s
-
+        }, 0, 5, TimeUnit.SECONDS); // Initial delay 0s, repeat every 2s
     }
 
-    public void checkCollisions() {
+    public void checkCollisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
 
+        // Check colision pea with zombie
         for (int i = 0; i < allPeas.size(); i++) {
                 Pea pea = allPeas.get(i);
             for (int j = 0; j < allZombies.size(); j++) {
                 Zombie zombie = allZombies.get(j);
 
-                if (zombie.getHealth() == 0) {
+                //TODO - VALIDAR CODIGO
+                /*if (zombie.getHealth() == 0) {
                     allZombies.remove(j);
                     zombie.delete();
                     int randomRowNumber = (int) (Math.random() * lanesToPlaceZombies) + 1;
-                    System.out.println(randomRowNumber);
                     createZombies(randomRowNumber);
-                }
+                }*/
 
                 int peaX = pea.getPositionX();
                 int peaY = pea.getPositionY();
@@ -119,12 +135,89 @@ public class Game implements MouseHandler {
                     if ((peaX < zombieX + distanceToZombie)
                             && (peaX + distanceToZombie > zombieX)) {
                         System.out.println("Collision detected!");
-                        allPeas.remove(i);
-                        pea.delete();
                         zombie.setInjury(pea.getDamage());
+                        allPeas.remove(i);
+                        System.out.println(pea.toString());
+                        pea.delete();
+
                     }
 
                 }
+
+            }
+        }
+
+        //Check colision Zombie with Plant
+        for (int i = 0; i < allZombies.size(); i++) {
+            Zombie zombie = allZombies.get(i);
+
+            for (int j = i; j < allPlants.size(); j++) {
+                Plants plant = allPlants.get(j);
+
+                System.out.println("Plant " + j + " : " + plant.getPlantsPosX());
+
+                if (Math.abs(zombie.getZombiePositionY() - plant.getPlantsPosY()) <= 20) {
+                    if(Math.abs(zombie.getZombiePositionX() - plant.getPlantsPosX()) <= 40 &&
+                    plant.getHealth() > 0){
+                        zombie.stopMove();
+                        plant.getInjured(zombie.getDamage());
+                        System.out.println("Plant life : " + plant.getHealth());
+
+                    }
+                }
+
+                if (Math.abs(zombie.getZombiePositionY() - plant.getPlantsPosY()) <= 20) {
+                    if (Math.abs(zombie.getZombiePositionX() - plant.getPlantsPosX()) <= 40 &&
+                            plant.getHealth() == 0) {
+
+                        allPlants.remove(j);
+                        plant.delete();
+                        zombie.setSpeed(0.4);
+
+                    }
+                }
+
+
+            }
+
+        }
+
+        /*
+        for (int k = 0; k < allPlants.size(); k++) {
+            Plants planta = allPlants.get(k);
+
+            int peaX = pea.getPositionX();
+            int peaY = pea.getPositionY();
+            int zombieX = zombie.getZombiePositionX();
+            int zombieY = zombie.getZombiePositionY();
+
+            int plantX = planta.getPlantsPosX();
+            int plantY = planta.getPlantsPosY();
+
+            if (planta.getHealth() != 0 && zombieX - plantX < 60 &&
+                    Math.abs(plantY - zombieY) <= tollerance) {
+                zombie.stopMove();
+                planta.getInjured(zombie.getDamage());
+                System.out.println(planta.getHealth());
+            }
+
+            if (planta.getHealth() == 0) {
+                System.out.println("Plant health :" + planta.getHealth() + " 2");
+                zombie.move();
+                allPlants.remove(k);
+                planta.delete();
+            }
+        }
+*/
+
+
+        for (int a = 0; a < allZombies.size(); a++) {
+            Zombie zombie = allZombies.get(a);
+            if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance){
+
+                allZombies.remove(a);
+                zombie.delete();
+                gameOver();
             }
         }
     }
@@ -149,17 +242,13 @@ public class Game implements MouseHandler {
     }
 
     public void showPlants() {
-        String plantType = "peaCannon";
-
-        plant = new PlantsBuilder().setType(plantType).build();
-        createdPlants = PlantsFactory.createPlants(plant);
 
         mouse = new Mouse(this);
         mouse.addEventListener(MouseEventType.MOUSE_CLICKED);
 
     }
 
-    public void startGameLoop() throws InterruptedException {
+    public void startGameLoop() throws InterruptedException, UnsupportedAudioFileException, LineUnavailableException, IOException {
 
         while(true){
             moveAllPeas(allPeas);
@@ -173,7 +262,7 @@ public class Game implements MouseHandler {
         // Create number of zombies comparing with the level
         if(level == 1) {
             System.out.println("level is : " + level);
-            numberOfZombies = 2;
+            numberOfZombies = 1;
             lanesToPlaceZombies = 2;
         }else if (level == 2) {
             numberOfZombies = 6;
@@ -218,8 +307,14 @@ public class Game implements MouseHandler {
             }
 
             try {
+                String plantType = "peaCannon";
 
-                createdPlants.addNewPlant(centerX,centerY);
+                plant = new PlantsBuilder().setType(plantType).build();
+                Plants newPlant = PlantsFactory.createPlants(plant);
+
+                newPlant.setPosition(centerX, centerY); // Assuming a method to set position exists
+                allPlants.add(newPlant);
+
                 createAndShootPeas(centerX, centerY);
 
             } catch (IOException | InterruptedException e) {

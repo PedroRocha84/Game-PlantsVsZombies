@@ -19,11 +19,13 @@ public class PlantsFactory {
 
     private static Plants createPeaCannon() {
         return new PlantsBuilder()
-                .setDamage(20)
+                .setDamage(10)
                 .setType("peaCannon")
                 .setHealth(100)
                 .setMaxHealth(100) // Define a vida atual como igual à máxima
                 .setPicturePath("resources/images/peashootersmall1.png")
+                .setPositionX(0)
+                .setPositionY(0)
                 .build();
     }
 }

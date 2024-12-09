@@ -1,6 +1,5 @@
 package com.learning.play;
-// Java program to play an Audio
-// file using Clip Object
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -13,28 +12,20 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundPlayer {
 
-    // to store current position
     private Long currentFrame;
     private Clip clip;
 
-    // current status of clip
     private String status;
     private String filePath;
 
     AudioInputStream audioInputStream;
 
-    // constructor to initialize streams and clip
     public SoundPlayer(String filePath) throws UnsupportedAudioFileException,  IOException, LineUnavailableException {
         this.filePath = filePath;
         // create AudioInputStream object
         audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-
-        // create clip reference
         clip = AudioSystem.getClip();
-
-        // open audioInputStream to the clip
         clip.open(audioInputStream);
-
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
@@ -43,7 +34,6 @@ public class SoundPlayer {
     {
         //start the clip
         clip.start();
-
         status = "play";
     }
 

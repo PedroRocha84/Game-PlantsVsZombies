@@ -3,11 +3,9 @@ package com.learning;
 import com.learning.play.Menu;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
-
 
         try {
             Menu menu = new Menu();
@@ -15,12 +13,6 @@ public class Main {
             menu.show();
         }catch (Exception e){
             System.err.println(e);
-        }finally {
-
         }
-
-
-
     }
-
 }

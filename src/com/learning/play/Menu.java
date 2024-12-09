@@ -9,7 +9,6 @@ import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviour.MenuControl;
 
 import javax.sound.sampled.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -46,7 +45,9 @@ public class Menu implements MouseHandler {
 
     public void show() throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
 
-            Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
+            Picture backgroundImg = new Picture(MenuControl.GAMESTATS_POS_X.getValue(),
+                                                MenuControl.GAMESTATS_POS_Y.getValue(),
+                                            "resources/images/menu_background.png");
             backgroundImg.draw();
 
             Mouse mouse = new Mouse(this);
@@ -57,9 +58,7 @@ public class Menu implements MouseHandler {
             }
 
             soundPlayer.stop();
-            String filePath = "resources/sounds/soundtrack.wav";
-            soundPlayer  = new SoundPlayer(filePath);
-            soundPlayer.play();
+
             backgroundImg.delete();
 
             Game game = new Game(1);

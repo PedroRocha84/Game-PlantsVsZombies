@@ -21,7 +21,7 @@ public class ZombieFactory {
                 .setType("Civil")
                 .setHealth(100)
                 .setMaxHealth(200)
-                .setSpeed(0.3)
+                .setSpeed(0.6)
                 .setPicturePath("./resources/images/zombieCivilS.png")
                 .build();
     }
@@ -30,9 +30,9 @@ public class ZombieFactory {
         return new ZombieBuilder()
                 .setDamage(10)
                 .setType("Militar")
-                .setHealth(100)
+                .setHealth(150)
                 .setMaxHealth(200)
-                .setSpeed(0.2)
+                .setSpeed(0.4)
                 .setPicturePath("./resources/images/zombieMilitarS.png")
                 .build();
     }

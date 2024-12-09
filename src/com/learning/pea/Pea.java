@@ -9,7 +9,7 @@ public class Pea {
 
     private int xPos;
     private int yPos;
-    private int speed = 10;
+    private int speed = 3;
     private int damage = 20;
 
     private Picture newPeaPicture;
@@ -32,10 +32,14 @@ public class Pea {
         newPeaPicture = new Picture(distFromPlantX, distFromPlantY, "resources/images/pea.png");
         newPeaPicture.draw();
 
+        this.xPos =centerX;
+        this.yPos =centerY;
+
     }
 
     public void movePea()  {
         newPeaPicture.translate(1  * speed,0);
+        this.xPos = newPeaPicture.getX();
     }
 
     public int getPositionX() {
@@ -52,5 +56,16 @@ public class Pea {
 
     public Picture getPicture() {
         return newPeaPicture;
+    }
+
+    @Override
+    public String toString() {
+        return "Pea{" +
+                "xPos=" + xPos +
+                ", yPos=" + yPos +
+                ", speed=" + speed +
+                ", damage=" + damage +
+                ", newPeaPicture=" + newPeaPicture +
+                '}';
     }
 }

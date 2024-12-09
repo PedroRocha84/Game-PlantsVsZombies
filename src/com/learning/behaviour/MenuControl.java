@@ -20,7 +20,10 @@ public enum MenuControl {
     ZOMBIES_POSITION_Y(60),
 
     PEAS_POSITION_ADJUSTMENT_X(30),
-    PEAS_POSITION_ADJUSTMENT_Y(3);
+    PEAS_POSITION_ADJUSTMENT_Y(3),
+
+    GAMESTATS_POS_X(10),
+    GAMESTATS_POS_Y(10);
 
     private final int value;
 
