@@ -8,8 +8,9 @@ import com.codeforall.online.simplegraphics.mouse.MouseHandler;
 import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviour.MenuControl;
 
+import javax.sound.sampled.*;
 import java.io.FileNotFoundException;
-
+import java.io.IOException;
 
 
 public class Menu implements MouseHandler {
@@ -23,17 +24,27 @@ public class Menu implements MouseHandler {
 
     private Game game;
     private Thread musicThread;
+    private SoundPlayer soundPlayer;
 
     public Menu() throws Exception {
         this.startButtonPressed = false;
     }
 
-    public void init() {
+    public void init() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         Canvas.setMaxX(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX));
         Canvas.setMaxY(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX));
+
+        try {
+            String filePath = "resources/sounds/introTheme.wav";
+            soundPlayer  = new SoundPlayer(filePath);
+            soundPlayer.play();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void show() throws FileNotFoundException, InterruptedException {
+    public void show() throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
 
             Picture backgroundImg = new Picture(10, 10, "resources/images/menu_background.png");
             backgroundImg.draw();
@@ -44,7 +55,10 @@ public class Menu implements MouseHandler {
             while(!startButtonPressed) {
                 Thread.sleep(50);
             }
-
+            soundPlayer.stop();
+            String filePath = "resources/sounds/soundtrack.wav";
+            soundPlayer  = new SoundPlayer(filePath);
+            soundPlayer.play();
             backgroundImg.delete();
 
             Game game = new Game(1);
