@@ -60,6 +60,7 @@ public class Game implements MouseHandler {
     public Game(int level) throws FileNotFoundException, InterruptedException {
         this.level = level;
         startGame(this.level);
+
     }
 
     public void startGame(int level) throws FileNotFoundException, InterruptedException {
@@ -67,6 +68,8 @@ public class Game implements MouseHandler {
         String backgroundPath = GameLevel.getGameBackground(level);
         activateBackground(backgroundPath);
 
+        GameStats gameStats = new GameStats();
+        gameStats.showMainText(level);
         addZombies(level);
 
         showPlants();

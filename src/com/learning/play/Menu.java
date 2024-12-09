@@ -55,6 +55,7 @@ public class Menu implements MouseHandler {
             while(!startButtonPressed) {
                 Thread.sleep(50);
             }
+
             soundPlayer.stop();
             String filePath = "resources/sounds/soundtrack.wav";
             soundPlayer  = new SoundPlayer(filePath);
