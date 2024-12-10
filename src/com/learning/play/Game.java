@@ -197,6 +197,7 @@ public class Game implements MouseHandler {
             if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance) {
                 allZombies.remove(a);
                 zombie.delete();
+                isPaused = true;
                 gameOver();
             }
         }
