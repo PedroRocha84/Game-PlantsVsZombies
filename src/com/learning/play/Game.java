@@ -145,7 +145,7 @@ public class Game implements MouseHandler {
                             && (peaX + distanceToZombie > zombieX)) {
                         System.out.println("Collision detected!");
 
-                        playCollisionSound();
+                        //playCollisionSound();
 
 
                         zombie.setInjury(pea.getDamage());
