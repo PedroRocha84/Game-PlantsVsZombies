@@ -1,7 +1,6 @@
 package com.learning.plant;
 
 import com.codeforall.online.simplegraphics.pictures.Picture;
-import java.io.IOException;
 
 public class Plants {
 

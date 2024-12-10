@@ -17,7 +17,7 @@ public class ZombieFactory {
 
     private static Zombie createCivilZombie() {
         return new ZombieBuilder()
-                .setDamage(10)
+                .setDamage(5)
                 .setType("Civil")
                 .setHealth(100)
                 .setMaxHealth(200)
@@ -28,7 +28,7 @@ public class ZombieFactory {
 
     private static Zombie createMilitarZombie() {
         return new ZombieBuilder()
-                .setDamage(10)
+                .setDamage(5)
                 .setType("Militar")
                 .setHealth(150)
                 .setMaxHealth(200)

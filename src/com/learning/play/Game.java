@@ -94,37 +94,32 @@ public class Game implements MouseHandler {
         gameStats.gameOver();
     }
 
-    public void createAndShootPeas(int centerX, int centerY) throws FileNotFoundException, InterruptedException {
+    public void createAndShootPeas(int centerX, int centerY, Plants shootingPlant) throws FileNotFoundException, InterruptedException {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
         scheduler.scheduleAtFixedRate(() -> {
-            Pea pea = new Pea();
-            try {
-                pea.addNewPea(centerX,centerY);
-                allPeas.add(pea);
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            // Only shoot if the plant is still alive
+            if (shootingPlant.getHealth() > 0) {
+                Pea pea = new Pea();
+                try {
+                    pea.addNewPea(centerX, centerY);
+                    allPeas.add(pea);
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                scheduler.shutdown(); // Stop shooting if plant dies
             }
-
-        }, 0, 5, TimeUnit.SECONDS); // Initial delay 0s, repeat every 2s
+        }, 0, 5, TimeUnit.SECONDS);
     }
 
     public void checkCollisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-
-        // Check colision pea with zombie
-        for (int i = 0; i < allPeas.size(); i++) {
-                Pea pea = allPeas.get(i);
-            for (int j = 0; j < allZombies.size(); j++) {
+        // Check collision pea with zombie
+        for (int i = allPeas.size() - 1; i >= 0; i--) {
+            Pea pea = allPeas.get(i);
+            for (int j = allZombies.size() - 1; j >= 0; j--) {
                 Zombie zombie = allZombies.get(j);
-
-                //TODO - VALIDAR CODIGO
-                /*if (zombie.getHealth() == 0) {
-                    allZombies.remove(j);
-                    zombie.delete();
-                    int randomRowNumber = (int) (Math.random() * lanesToPlaceZombies) + 1;
-                    createZombies(randomRowNumber);
-                }*/
 
                 int peaX = pea.getPositionX();
                 int peaY = pea.getPositionY();
@@ -137,89 +132,62 @@ public class Game implements MouseHandler {
                         System.out.println("Collision detected!");
                         zombie.setInjury(pea.getDamage());
                         allPeas.remove(i);
-                        System.out.println(pea.toString());
                         pea.delete();
-
+                        break; // Exit inner loop after removing pea
                     }
-
                 }
-
             }
         }
 
-        //Check colision Zombie with Plant
-        for (int i = 0; i < allZombies.size(); i++) {
+        // Check collision Zombie with Plant
+        for (int i = allZombies.size() - 1; i >= 0; i--) {
             Zombie zombie = allZombies.get(i);
 
-            for (int j = i; j < allPlants.size(); j++) {
+            for (int j = allPlants.size() - 1; j >= 0; j--) {
                 Plants plant = allPlants.get(j);
 
-                System.out.println("Plant " + j + " : " + plant.getPlantsPosX());
-
                 if (Math.abs(zombie.getZombiePositionY() - plant.getPlantsPosY()) <= 20) {
-                    if(Math.abs(zombie.getZombiePositionX() - plant.getPlantsPosX()) <= 40 &&
-                    plant.getHealth() > 0){
+                    if (Math.abs(zombie.getZombiePositionX() - plant.getPlantsPosX()) <= 40 && plant.getHealth() > 0) {
+                        System.out.println("Zombie collided with Plant");
                         zombie.stopMove();
                         plant.getInjured(zombie.getDamage());
-                        System.out.println("Plant life : " + plant.getHealth());
-
+                        System.out.println("Plant life: " + plant.getHealth());
                     }
-                }
 
-                if (Math.abs(zombie.getZombiePositionY() - plant.getPlantsPosY()) <= 20) {
-                    if (Math.abs(zombie.getZombiePositionX() - plant.getPlantsPosX()) <= 40 &&
-                            plant.getHealth() == 0) {
-
+                    // When plant dies, remove it and allow zombie to move
+                    if (plant.getHealth() <= 0) {
                         allPlants.remove(j);
                         plant.delete();
                         zombie.setSpeed(0.4);
 
+                        // Stop shooting peas for this plant
+                        removePeasForPlant(plant);
                     }
                 }
-
-
-            }
-
-        }
-
-        /*
-        for (int k = 0; k < allPlants.size(); k++) {
-            Plants planta = allPlants.get(k);
-
-            int peaX = pea.getPositionX();
-            int peaY = pea.getPositionY();
-            int zombieX = zombie.getZombiePositionX();
-            int zombieY = zombie.getZombiePositionY();
-
-            int plantX = planta.getPlantsPosX();
-            int plantY = planta.getPlantsPosY();
-
-            if (planta.getHealth() != 0 && zombieX - plantX < 60 &&
-                    Math.abs(plantY - zombieY) <= tollerance) {
-                zombie.stopMove();
-                planta.getInjured(zombie.getDamage());
-                System.out.println(planta.getHealth());
-            }
-
-            if (planta.getHealth() == 0) {
-                System.out.println("Plant health :" + planta.getHealth() + " 2");
-                zombie.move();
-                allPlants.remove(k);
-                planta.delete();
             }
         }
-*/
 
-
-        for (int a = 0; a < allZombies.size(); a++) {
+        // Check game over condition
+        for (int a = allZombies.size() - 1; a >= 0; a--) {
             Zombie zombie = allZombies.get(a);
-            if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance){
-
+            if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance) {
                 allZombies.remove(a);
                 zombie.delete();
                 gameOver();
             }
         }
+    }
+
+    // New method to remove peas associated with a dead plant
+    private void removePeasForPlant(Plants deadPlant) {
+        // Remove peas shot from the specific plant
+        allPeas.removeIf(pea -> {
+            if (Math.abs(pea.getPositionY() - deadPlant.getPlantsPosY()) <= 20) {
+                pea.delete(); // Delete the pea graphic
+                return true;
+            }
+            return false;
+        });
     }
 
     public void activateBackground(String imagePath) throws FileNotFoundException {
@@ -251,10 +219,10 @@ public class Game implements MouseHandler {
     public void startGameLoop() throws InterruptedException, UnsupportedAudioFileException, LineUnavailableException, IOException {
 
         while(true){
-            moveAllPeas(allPeas);
-            Thread.sleep(50);
-            moveAllZombies();
             checkCollisions();
+            moveAllPeas();
+            moveAllZombies();
+            Thread.sleep(50);
         }
     }
 
@@ -295,14 +263,14 @@ public class Game implements MouseHandler {
             int cellX = gridStartX + (column * cellWidth);
             int cellY = gridStartY + (row * cellHeight);
 
-            int centerX = cellX + cellWidth / 2  ;
-            int centerY = cellY + cellHeight / 2 - 18 ;
+            int centerX = cellX + cellWidth / 2;
+            int centerY = cellY + cellHeight / 2 - 18;
 
-            if(mouseX > 260 && mouseX < 300) {
+            if (mouseX > 260 && mouseX < 300) {
                 centerX -= 10;
-            } else if(mouseX > 300 && mouseX < 400) {
+            } else if (mouseX > 300 && mouseX < 400) {
                 centerX -= 12;
-            } else if(mouseX > 400) {
+            } else if (mouseX > 400) {
                 centerX -= 20;
             }
 
@@ -315,19 +283,20 @@ public class Game implements MouseHandler {
                 newPlant.setPosition(centerX, centerY); // Assuming a method to set position exists
                 allPlants.add(newPlant);
 
-                createAndShootPeas(centerX, centerY);
+                createAndShootPeas(centerX, centerY, newPlant);
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-    }
+        }
     }
 
-    public void moveAllPeas(List<Pea> allPeas) {
+    public void moveAllPeas() {
         for (int i = 0; i < allPeas.size(); i++) {
-            Pea pea = this.allPeas.get(i);
+            Pea pea = allPeas.get(i);
             pea.movePea();
         }
+
     }
 
     public void moveAllZombies() {
