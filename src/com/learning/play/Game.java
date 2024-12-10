@@ -62,9 +62,16 @@ public class Game implements MouseHandler {
     private Plants plant;
     private SoundPlayer soundPlayer;
 
+    private MenuButton button;
+    private boolean isPaused = false;
+
     public Game(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
         this.level = level;
+        this.button = new MenuButton();
         startGame(this.level);
+
+
+
     }
 
     public void startGame(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
@@ -83,7 +90,11 @@ public class Game implements MouseHandler {
 
         showPlants();
 
+        button.showMenu();
+
         startGameLoop();
+
+
 
     }
 
@@ -219,6 +230,10 @@ public class Game implements MouseHandler {
     public void startGameLoop() throws InterruptedException, UnsupportedAudioFileException, LineUnavailableException, IOException {
 
         while(true){
+            if (isPaused) {
+                Thread.sleep(50);
+                continue;
+            }
             checkCollisions();
             moveAllPeas();
             moveAllZombies();
@@ -306,15 +321,41 @@ public class Game implements MouseHandler {
         }
     }
 
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
+@Override
+public void mouseClicked(MouseEvent mouseEvent) {
 
-        int mouseX = (int) mouseEvent.getX();
-        int mouseY = (int) mouseEvent.getY() - 39;
-        System.out.println(mouseX + " " + mouseY);
-            setPlantPosition(mouseX,mouseY);
+    int mouseX = (int) mouseEvent.getX();
+    int mouseY = (int) mouseEvent.getY() -10;
 
+    System.out.println("Mouse clicked at: " + mouseX + ", " + mouseY);
+    System.out.println("Button bounds: " + button.isOver(mouseEvent));
+
+    if (isPaused) {
+        System.out.println("Game is paused. Cannot create plants.");
+        return;
+    }
+
+    if (button.isOver(mouseEvent)) {
+        System.out.println("Button clicked!");
+        isPaused = true;
+        button.openNewMenu();
+
+        int areaStartX = 229;
+        int areaStartY = 384;
+        int areaEndX = 594;
+        int areaEndY = 430;
+
+        if (mouseX >= areaStartX && mouseX <= areaEndX && mouseY >= areaStartY && mouseY <= areaEndY) {
+            System.out.println("Clicked within the defined area!");
+            isPaused = false;
         }
+
+    } else {
+        System.out.println("Plant placement at: " + mouseX + ", " + mouseY);
+        setPlantPosition(mouseX, mouseY);
+    }
+}
+
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {

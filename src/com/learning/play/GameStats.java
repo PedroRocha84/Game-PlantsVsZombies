@@ -2,6 +2,7 @@ package com.learning.play;
 
 import com.codeforall.online.simplegraphics.graphics.Color;
 import com.codeforall.online.simplegraphics.graphics.Text;
+import com.codeforall.online.simplegraphics.pictures.Picture;
 import com.learning.behaviour.MenuControl;
 
 public class GameStats {
@@ -22,10 +23,13 @@ public class GameStats {
     }
 
     public void gameOver(){
-        Text text = new Text(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX) / 2 , MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX) / 2, "GAME OVER");
-        text.setColor(Color.BLACK);
-        text.grow(200, 200);
-        text.draw();
+        Picture over = new Picture(170, 25,"resources/images/gameOver1s.png");
+        over.draw();
+
+//        Text text = new Text(MenuControl.get(MenuControl.GRID_CANVAS_SIZE_X_MAX) / 2 , MenuControl.get(MenuControl.GRID_CANVAS_SIZE_Y_MAX) / 2, "GAME OVER");
+//        text.setColor(Color.BLACK);
+//        text.grow(200, 200);
+//        text.draw();
     }
 
 }
