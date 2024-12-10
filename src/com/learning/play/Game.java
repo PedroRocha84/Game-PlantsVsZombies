@@ -271,13 +271,13 @@ public class Game implements MouseHandler {
         // Create number of zombies comparing with the level
         if(level == 1) {
             System.out.println("level is : " + level);
-            numberOfZombies = 1;
+            numberOfZombies = 3;
             lanesToPlaceZombies = 2;
         }else if (level == 2) {
-            numberOfZombies = 6;
+            numberOfZombies = 10;
             lanesToPlaceZombies = 3;
         } else if(level == 3) {
-            numberOfZombies = 8;
+            numberOfZombies = 15;
             lanesToPlaceZombies = 5;
         }
     }
