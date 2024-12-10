@@ -63,11 +63,13 @@ public class Game implements MouseHandler {
     private SoundPlayer soundPlayer;
 
     private MenuButton button;
+    private NewMenu newMenu;
     private boolean isPaused = false;
 
     public Game(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
         this.level = level;
         this.button = new MenuButton();
+        this.newMenu = new NewMenu();
         startGame(this.level);
 
 
@@ -321,40 +323,60 @@ public class Game implements MouseHandler {
         }
     }
 
-@Override
-public void mouseClicked(MouseEvent mouseEvent) {
 
-    int mouseX = (int) mouseEvent.getX();
-    int mouseY = (int) mouseEvent.getY() -10;
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+        int mouseX = (int) mouseEvent.getX();
+        int mouseY = (int) mouseEvent.getY();
 
-    System.out.println("Mouse clicked at: " + mouseX + ", " + mouseY);
-    System.out.println("Button bounds: " + button.isOver(mouseEvent));
+        System.out.println("Mouse clicked at: " + mouseX + ", " + mouseY);
 
-    if (isPaused) {
-        System.out.println("Game is paused. Cannot create plants.");
-        return;
-    }
 
-    if (button.isOver(mouseEvent)) {
-        System.out.println("Button clicked!");
-        isPaused = true;
-        button.openNewMenu();
+        if (isPaused) {
+            System.out.println("Game is paused. Cannot create plants.");
 
-        int areaStartX = 229;
-        int areaStartY = 384;
-        int areaEndX = 594;
-        int areaEndY = 430;
 
-        if (mouseX >= areaStartX && mouseX <= areaEndX && mouseY >= areaStartY && mouseY <= areaEndY) {
-            System.out.println("Clicked within the defined area!");
-            isPaused = false;
+            int areaStartX = 276;
+            int areaStartY = 370;
+            int areaEndX = 571;
+            int areaEndY = 430;
+
+
+            System.out.println("Checking click within area: (" + areaStartX + ", " + areaStartY + ") to (" + areaEndX + ", " + areaEndY + ")");
+            if (mouseX >= areaStartX && mouseX <= areaEndX && mouseY >= areaStartY && mouseY <= areaEndY) {
+                System.out.println("Clicked within the defined area to resume!");
+                isPaused = false;
+                newMenu.closeMenu();
+            } else {
+                System.out.println("Clicked outside the resume area.");
+            }
+
+            return;
         }
 
-    } else {
-        System.out.println("Plant placement at: " + mouseX + ", " + mouseY);
-        setPlantPosition(mouseX, mouseY);
+
+        if (button.isOver(mouseEvent)) {
+            System.out.println("Button clicked!");
+            isPaused = true;
+            newMenu.openNewMenu();
+        }
+
+
+        else if (isPaused && newMenu.isOver(mouseEvent)) {
+            System.out.println("Clicked inside the menu. Closing menu.");
+            newMenu.closeMenu();
+        } else {
+
+            if (!isPaused) {
+
+                System.out.println("Plant placement at: " + mouseX + ", " + mouseY);
+                setPlantPosition(mouseX, mouseY);
+            }
+        }
     }
-}
+
+
+
 
 
     @Override
