@@ -88,6 +88,7 @@ public class Game implements MouseHandler {
         soundPlayer  = new SoundPlayer(filePath);
         soundPlayer.play();
 
+
         addZombies(level);
 
         showPlants();
@@ -143,6 +144,10 @@ public class Game implements MouseHandler {
                     if ((peaX < zombieX + distanceToZombie)
                             && (peaX + distanceToZombie > zombieX)) {
                         System.out.println("Collision detected!");
+
+                        playCollisionSound();
+
+
                         zombie.setInjury(pea.getDamage());
                         System.out.println("Zombie health: " + zombie.getHealth());
                         if(zombie.getHealth() <= 0){
@@ -156,6 +161,7 @@ public class Game implements MouseHandler {
                 }
             }
         }
+
 
         // Check collision Zombie with Plant
         for (int i = allZombies.size() - 1; i >= 0; i--) {
@@ -195,6 +201,19 @@ public class Game implements MouseHandler {
             }
         }
     }
+
+
+
+//    private void playCollisionSound() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+//        String soundFilePath = "resources/sounds/hit.wav";
+//        SoundPlayer soundPlayer = new SoundPlayer(soundFilePath);
+//        soundPlayer.play();
+//        //espera 1segundo
+//        soundPlayer.stop();
+//    }
+
+
+
 
     // New method to remove peas associated with a dead plant
     private void removePeasForPlant(Plants deadPlant) {
