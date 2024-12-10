@@ -144,6 +144,11 @@ public class Game implements MouseHandler {
                             && (peaX + distanceToZombie > zombieX)) {
                         System.out.println("Collision detected!");
                         zombie.setInjury(pea.getDamage());
+                        System.out.println("Zombie health: " + zombie.getHealth());
+                        if(zombie.getHealth() <= 0){
+                            zombie.delete();
+                            allZombies.remove(zombie);
+                        }
                         allPeas.remove(i);
                         pea.delete();
                         break; // Exit inner loop after removing pea
