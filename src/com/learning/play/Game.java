@@ -197,6 +197,7 @@ public class Game implements MouseHandler {
             if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance) {
                 allZombies.remove(a);
                 zombie.delete();
+                isPaused = true;
                 gameOver();
             }
         }
@@ -271,7 +272,7 @@ public class Game implements MouseHandler {
         // Create number of zombies comparing with the level
         if(level == 1) {
             System.out.println("level is : " + level);
-            numberOfZombies = 1;
+            numberOfZombies = 3;
             lanesToPlaceZombies = 2;
         }else if (level == 2) {
             numberOfZombies = 6;
