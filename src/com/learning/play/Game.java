@@ -76,8 +76,8 @@ public class Game implements MouseHandler {
         gameStats.showMainText(level);
 
         String filePath = "resources/sounds/soundtrack.wav";
-       // soundPlayer  = new SoundPlayer(filePath);
-       // soundPlayer.play();
+        soundPlayer  = new SoundPlayer(filePath);
+        soundPlayer.play();
 
         addZombies(level);
 
