@@ -61,7 +61,7 @@ public class Menu implements MouseHandler {
 
             backgroundImg.delete();
 
-            Game game = new Game(1);
+            Game game = new Game(1,200);
     }
 
     @Override

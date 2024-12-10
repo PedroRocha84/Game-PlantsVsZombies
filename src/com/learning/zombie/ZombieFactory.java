@@ -12,27 +12,26 @@ public class ZombieFactory {
         }else {
             return createMilitarZombie();
         }
-
     }
 
     private static Zombie createCivilZombie() {
         return new ZombieBuilder()
-                .setDamage(5)
+                .setDamage(3)
                 .setType("Civil")
                 .setHealth(100)
                 .setMaxHealth(200)
-                .setSpeed(5)
+                .setSpeed(0.4)
                 .setPicturePath("./resources/images/zombieCivilS.png")
                 .build();
     }
 
     private static Zombie createMilitarZombie() {
         return new ZombieBuilder()
-                .setDamage(5)
+                .setDamage(3)
                 .setType("Militar")
                 .setHealth(150)
                 .setMaxHealth(200)
-                .setSpeed(5)
+                .setSpeed(0.4)
                 .setPicturePath("./resources/images/zombieMilitarS.png")
                 .build();
     }

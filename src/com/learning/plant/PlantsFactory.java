@@ -1,8 +1,6 @@
 package com.learning.plant;
 
-
 public class PlantsFactory {
-
 
     public static Plants createPlants(Plants planta) {
         if (planta == null || planta.getType() == null) {
@@ -15,13 +13,11 @@ public class PlantsFactory {
         throw new IllegalArgumentException("Tipo de planta não suportado: " + planta.getType());
     }
 
-
-
     private static Plants createPeaCannon() {
         return new PlantsBuilder()
                 .setDamage(10)
                 .setType("peaCannon")
-                .setHealth(100)
+                .setHealth(250)
                 .setMaxHealth(100) // Define a vida atual como igual à máxima
                 .setPicturePath("resources/images/peashootersmall1.png")
                 .setPositionX(0)

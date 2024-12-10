@@ -9,8 +9,8 @@ public class Pea {
 
     private int xPos;
     private int yPos;
-    private int speed = 3;
-    private int damage = 20;
+    private int speed = 6;
+    private int damage = 15;
 
     private Picture newPeaPicture;
 
