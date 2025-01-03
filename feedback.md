@@ -5,7 +5,7 @@
 - **Handle specific exceptions**: Instead of catching general exceptions, focus on handling specific ones. This makes your code more reliable and avoids catching unintended runtime exceptions.
 
 ## Zombie - Branch name - feedbackZombieClass
-- **Remove unused properties**: Keep the class focused and efficient.
+- **Remove unused properties**: Keep the class focused and efficient. - DONE!
 - **Relocate the `addNewZombie()` method**: Move it to the `ZombieFactory` class, as it better fits the responsibility of managing zombie creation.
 
 ## ZombieBuilder

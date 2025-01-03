@@ -39,20 +39,8 @@ public class Zombie {
         return health;
     }
 
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
     public int getDamage() {
         return damage;
-    }
-
-    public String getPicturePath() {
-        return picturePath;
     }
 
     public int getZombiePositionX() {
@@ -61,31 +49,9 @@ public class Zombie {
 
     public int getZombiePositionY() {return zombiePositionY;}
 
-
     // Setters
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-        }
-
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
-    }
-
     public void setSpeed(double speed) {
         this.speed = speed;
-    }
-
-    public void setDamage(int damage) {
-        this.health -= damage;
-    }
-
-    public void setPicturePath(String picturePath) {
-        this.picturePath = picturePath;
     }
 
     public void setInjury(int damage) {

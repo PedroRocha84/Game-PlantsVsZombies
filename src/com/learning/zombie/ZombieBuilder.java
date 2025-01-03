@@ -3,15 +3,36 @@ package com.learning.zombie;
 public class ZombieBuilder {
 
     private String type;
+    private String picturePath;
     private int health;
     private int maxHealth;
-    private double speed;
     private int damage;
-    private String picturePath;
+    private double speed;
 
     public Zombie build(){
         return new Zombie(this);
     }
+
+    //Getters
+    public String getType() { return type;}
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public String getPicturePath() { return picturePath; }
 
     //Setters
     public ZombieBuilder setType(String type) {
@@ -44,26 +65,6 @@ public class ZombieBuilder {
         return this;
     }
 
-    //Getters
 
-    public String getType() { return type;}
-
-    public int getHealth() {
-        return health;
-    }
-
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public String getPicturePath() { return picturePath; }
 
 }
