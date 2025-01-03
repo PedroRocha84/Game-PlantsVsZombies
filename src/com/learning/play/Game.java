@@ -27,13 +27,14 @@ import java.util.concurrent.TimeUnit;
 
 public class Game implements MouseHandler {
 
+    private static int IMAGE_WIDTH = 60;
+    private static int IMAGE_HEIGTH = 65;
+    private static int TOLLERANCE = 30;
+
     private List<Zombie> allZombies = new ArrayList<>();
     private List<Pea> allPeas = new ArrayList<>();
     private List<Plants> allPlants = new ArrayList<>();
 
-    private static int IMAGE_WIDTH = 60;
-    private static int IMAGE_HEIGTH = 65;
-    private static int tollerance = 30;
 
     // Retrieve grid boundaries from enum
     private int gridStartX = MenuControl.GRID_GRIDSTART_X.getValue();
@@ -41,9 +42,8 @@ public class Game implements MouseHandler {
     private int gridEndX = MenuControl.GRID_GRIDEND_X.getValue();
     private int gridEndY = MenuControl.GRID_GRIDEND_Y.getValue();
 
-    // Cell dimensions
-    int cellWidth = IMAGE_WIDTH;
-    int cellHeight = IMAGE_HEIGTH;
+    private int cellWidth = IMAGE_WIDTH;
+    private int cellHeight = IMAGE_HEIGTH;
 
     private int posX;
     private int posY;
@@ -51,17 +51,14 @@ public class Game implements MouseHandler {
     private int distanceToZombie = 30;
     private int numberOfZombies;
     private int lanesToPlaceZombies;
-    private int rowNumber;
 
     private String zombieType;
     private String backgroundPath;
 
     private Mouse mouse;
     private Picture playground;
-    private Plants createdPlants;
     private Plants plant;
     private SoundPlayer soundPlayer;
-
     private MenuButton button;
     private NewMenu newMenu;
     private boolean isPaused = false;
@@ -71,9 +68,6 @@ public class Game implements MouseHandler {
         this.button = new MenuButton();
         this.newMenu = new NewMenu();
         startGame(this.level);
-
-
-
     }
 
     public void startGame(int level) throws IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException {
@@ -95,14 +89,10 @@ public class Game implements MouseHandler {
         button.showMenu();
 
         startGameLoop();
-
-
-
     }
 
     public void gameOver() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         soundPlayer.stop();
-
         GameStats gameStats = new GameStats();
         gameStats.gameOver();
     }
@@ -110,7 +100,6 @@ public class Game implements MouseHandler {
     public void createAndShootPeas(int centerX, int centerY, Plants shootingPlant) throws FileNotFoundException, InterruptedException {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
         scheduler.scheduleAtFixedRate(() -> {
             // Only shoot if the plant is still alive
             if (shootingPlant.getHealth() > 0) {
@@ -122,13 +111,20 @@ public class Game implements MouseHandler {
                     throw new RuntimeException(e);
                 }
             } else {
-                scheduler.shutdown(); // Stop shooting if plant dies
+                scheduler.shutdown();
             }
         }, 0, 5, TimeUnit.SECONDS);
     }
 
     public void checkCollisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         // Check collision pea with zombie
+        checkPeaColisions();
+
+        checkPlantColision();
+
+        checkGame();
+    }
+    public void checkPeaColisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (int i = allPeas.size() - 1; i >= 0; i--) {
             Pea pea = allPeas.get(i);
             for (int j = allZombies.size() - 1; j >= 0; j--) {
@@ -139,7 +135,7 @@ public class Game implements MouseHandler {
                 int zombieX = zombie.getZombiePositionX();
                 int zombieY = zombie.getZombiePositionY();
 
-                if (Math.abs(peaY - zombieY) <= tollerance) {
+                if (Math.abs(peaY - zombieY) <= TOLLERANCE) {
                     if ((peaX < zombieX + distanceToZombie)
                             && (peaX + distanceToZombie > zombieX)) {
                         System.out.println("Collision detected!");
@@ -156,7 +152,8 @@ public class Game implements MouseHandler {
                 }
             }
         }
-
+    }
+    private void checkPlantColision(){
         // Check collision Zombie with Plant
         for (int i = allZombies.size() - 1; i >= 0; i--) {
             Zombie zombie = allZombies.get(i);
@@ -184,11 +181,12 @@ public class Game implements MouseHandler {
                 }
             }
         }
-
+    }
+    private void checkGame() throws UnsupportedAudioFileException, LineUnavailableException, IOException{
         // Check game over condition
         for (int a = allZombies.size() - 1; a >= 0; a--) {
             Zombie zombie = allZombies.get(a);
-            if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - tollerance) {
+            if (zombie.getZombiePositionX() <= MenuControl.GRID_GRIDSTART_X.getValue() - TOLLERANCE) {
                 allZombies.remove(a);
                 zombie.delete();
                 gameOver();
@@ -196,8 +194,8 @@ public class Game implements MouseHandler {
         }
     }
 
-    // New method to remove peas associated with a dead plant
     private void removePeasForPlant(Plants deadPlant) {
+        // New method to remove peas associated with a dead plant
         // Remove peas shot from the specific plant
         allPeas.removeIf(pea -> {
             if (Math.abs(pea.getPositionY() - deadPlant.getPlantsPosY()) <= 20) {
@@ -276,25 +274,9 @@ public class Game implements MouseHandler {
     public void setPlantPosition(int mouseX, int mouseY) {
 
         if (mouseX >= gridStartX && mouseX <= gridEndX && mouseY >= gridStartY && mouseY <= gridEndY) {
-            int relativeX = mouseX - gridStartX;
-            int relativeY = mouseY - gridStartY;
 
-            int column = relativeX / cellWidth;
-            int row = relativeY / cellHeight;
-
-            int cellX = gridStartX + (column * cellWidth);
-            int cellY = gridStartY + (row * cellHeight);
-
-            int centerX = cellX + cellWidth / 2;
-            int centerY = cellY + cellHeight / 2 - 18;
-
-            if (mouseX > 260 && mouseX < 300) {
-                centerX -= 10;
-            } else if (mouseX > 300 && mouseX < 400) {
-                centerX -= 12;
-            } else if (mouseX > 400) {
-                centerX -= 20;
-            }
+            int centerX = calculateCenterX(mouseX);
+            int centerY = calculateCenterY(mouseY);
 
             try {
                 String plantType = "peaCannon";
@@ -313,12 +295,37 @@ public class Game implements MouseHandler {
         }
     }
 
+    public int calculateCenterX(int mouseX){
+        int relativeX = mouseX - gridStartX;
+
+        int column = relativeX / cellWidth;
+
+        int cellX = gridStartX + (column * cellWidth);
+
+        int centerX = cellX + cellWidth / 2;
+
+        if (mouseX > 260 && mouseX < 300) {
+            centerX -= 15;
+        } else if (mouseX > 300 && mouseX < 400) {
+            centerX -= 20;
+        } else if (mouseX > 400) {
+            centerX -= 20;
+        }
+        return centerX;
+    }
+
+    private int calculateCenterY(int mouseY) {
+        int relativeY = mouseY - gridStartY;
+        int row = relativeY / cellHeight;
+        int cellY = gridStartY + (row * cellHeight);
+
+        return cellY + cellHeight / 2 - 18;
+    }
     public void moveAllPeas() {
         for (int i = 0; i < allPeas.size(); i++) {
             Pea pea = allPeas.get(i);
             pea.movePea();
         }
-
     }
 
     public void moveAllZombies() {
@@ -328,7 +335,6 @@ public class Game implements MouseHandler {
         }
     }
 
-
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         int mouseX = (int) mouseEvent.getX();
@@ -336,16 +342,13 @@ public class Game implements MouseHandler {
 
         System.out.println("Mouse clicked at: " + mouseX + ", " + mouseY);
 
-
         if (isPaused) {
             System.out.println("Game is paused. Cannot create plants.");
-
 
             int areaStartX = 276;
             int areaStartY = 370;
             int areaEndX = 571;
             int areaEndY = 430;
-
 
             System.out.println("Checking click within area: (" + areaStartX + ", " + areaStartY + ") to (" + areaEndX + ", " + areaEndY + ")");
             if (mouseX >= areaStartX && mouseX <= areaEndX && mouseY >= areaStartY && mouseY <= areaEndY) {
@@ -359,30 +362,22 @@ public class Game implements MouseHandler {
             return;
         }
 
-
         if (button.isOver(mouseEvent)) {
             System.out.println("Button clicked!");
             isPaused = true;
             newMenu.openNewMenu();
-        }
-
-
-        else if (isPaused && newMenu.isOver(mouseEvent)) {
+        } else if (isPaused && newMenu.isOver(mouseEvent)) {
             System.out.println("Clicked inside the menu. Closing menu.");
             newMenu.closeMenu();
         } else {
 
             if (!isPaused) {
-
                 System.out.println("Plant placement at: " + mouseX + ", " + mouseY);
                 setPlantPosition(mouseX, mouseY);
-            }
+           }
         }
+
     }
-
-
-
-
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {

@@ -14,18 +14,15 @@ import java.io.IOException;
 
 public class Menu implements MouseHandler {
 
-    int buttonInitX = MenuControl.get(MenuControl.MENU_BUTTON_X);
-    int buttonInitY = MenuControl.get(MenuControl.MENU_BUTTON_Y);
-    int buttonFinalX = MenuControl.get(MenuControl.MENU_BUTTON_WIDTH);
-    int buttonFinalY = MenuControl.get(MenuControl.MENU_BUTTON_HEIGHT);
+    private int buttonInitX = MenuControl.get(MenuControl.MENU_BUTTON_X);
+    private int buttonInitY = MenuControl.get(MenuControl.MENU_BUTTON_Y);
+    private int buttonFinalX = MenuControl.get(MenuControl.MENU_BUTTON_WIDTH);
+    private int buttonFinalY = MenuControl.get(MenuControl.MENU_BUTTON_HEIGHT);
 
     private boolean startButtonPressed;
-
-    private Game game;
-    private Thread musicThread;
     private SoundPlayer soundPlayer;
 
-    public Menu() throws Exception {
+    public Menu()  {
         this.startButtonPressed = false;
     }
 
@@ -62,6 +59,7 @@ public class Menu implements MouseHandler {
             backgroundImg.delete();
 
             Game game = new Game(1);
+            game.startGame(1);
     }
 
     @Override
