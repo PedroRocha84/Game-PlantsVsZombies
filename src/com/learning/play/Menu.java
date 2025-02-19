@@ -35,7 +35,7 @@ public class Menu implements MouseHandler {
             soundPlayer  = new SoundPlayer(filePath);
             soundPlayer.play();
 
-        } catch (Exception e) {
+        } catch (Exception e ) {
             throw new RuntimeException(e);
         }
     }
